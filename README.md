@@ -9,6 +9,8 @@ red for determining the red color for the theme.
 * Konsole
 * XFCE4 Terminal
 
+I can add support for others. Just raise an issue and I'll see what I can do!
+
 ## Requirements
 
 ### wtt and wtt2
