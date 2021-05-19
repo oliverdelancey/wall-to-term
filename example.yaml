@@ -1,0 +1,21 @@
+---
+rollinghills:
+  file: rollinghills.jpg
+  outputs:
+    - file: rolling-dark.colorscheme
+      name: rolling-dark
+      format: konsole
+      method: dark
+    - file: rolling-light.colorscheme
+      name: rolling-light
+      format: konsole
+      method: light
+
+nebula:
+  file: nebula.jpg
+  outputs:
+    - file: nebula-black.colorscheme
+      name: nebula-black
+      format: konsole
+      method: black
+
