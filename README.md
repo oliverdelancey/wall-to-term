@@ -7,6 +7,7 @@ red for determining the red color for the theme.
 ## Supported Terminals
 
 * Konsole
+* XFCE4 Terminal
 
 ## Requirements
 
