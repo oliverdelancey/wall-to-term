@@ -25,6 +25,7 @@ WHITE = (255, 255, 255)
 
 SILENT = False
 
+
 def brighten(rgb, values=(30, 30, 30)):
     """
     Brighten an RGB color.
@@ -95,12 +96,15 @@ def closest_color(rgb, colors):
         An RGB color.
     """
     r, g, b = rgb
+
     def color_diff(x):
-        return (abs(r - x[0]) ** 2 + abs(g - x[1]) ** 2 + abs(b - x[2]) ** 2)
+        return abs(r - x[0]) ** 2 + abs(g - x[1]) ** 2 + abs(b - x[2]) ** 2
+
     color_diffs = np.array([color_diff(i) for i in colors])
     loc = np.where(color_diffs == np.min(color_diffs))
     result = colors[loc][0]
     return result
+
 
 def color_diff_par(pair):
     """
@@ -119,7 +123,8 @@ def color_diff_par(pair):
     """
     rgb, x = pair
     r, g, b = rgb
-    return (abs(r - x[0]) ** 2 + abs(g - x[1]) ** 2 + abs(b - x[2]) ** 2)
+    return abs(r - x[0]) ** 2 + abs(g - x[1]) ** 2 + abs(b - x[2]) ** 2
+
 
 def closest_color_parallel(rgb, colors):
     """
@@ -142,12 +147,15 @@ def closest_color_parallel(rgb, colors):
     result = colors[loc][0]
     return result
 
+
 class KonsoleTheme:
     def __init__(self, name, colorset):
         self.name = name
         self.colorset = colorset
+
     def rgb_commas(self, rgb):
         return f"{rgb[0]},{rgb[1]},{rgb[2]}"
+
     def render(self):
         for c in self.colorset:
             self.colorset[c] = rgb_commas(self.colorset[c])
@@ -231,6 +239,7 @@ def gencolors(goal, colors):
     c = closest_color(goal, colors)
     return (c, brighten(c))
 
+
 def gencolors_parallel(goal, colors):
     c = closest_color_parallel(goal, colors)
     return (c, brighten(c))
@@ -240,9 +249,11 @@ def infoprint(s):
     if not SILENT:
         print(f"=> {s}")
 
+
 def errorprint(s):
     if not SILENT:
         print(f"\033[41m!!\033[0m\033[31m {s}\033[0m")
+
 
 def mehprint(s):
     if not SILENT:
@@ -283,30 +294,53 @@ def analyze_document(document):
                     "allowed": ["black", "white", "dark", "light"],
                     "default": "dark",
                 },
-            }}}
+            },
+        },
+    }
     new_schema = {
         "file": {"type": "string", "required": True},
         "outputs": {
             "type": "list",
             "items": [
-                {"type": "dict", "schema": {"file": {"type": "string", "required": True}}},
-                {"type": "dict", "schema": {"name": {"type": "string", "required": True}}},
-                {"type": "dict", "schema": {"format":
-                                            {"type": "string",
-                                             "required": True,
-                                             "allowed": THEME_REGISTRY.keys()}}},
-                {"type": "dict", "schema": {"method":
-                                            {"type": "string",
-                                             "required": False,
-                                             "allowed": ["black", "white", "dark", "light"],
-                                             "default": "dark"}}}]}}
+                {
+                    "type": "dict",
+                    "schema": {"file": {"type": "string", "required": True}},
+                },
+                {
+                    "type": "dict",
+                    "schema": {"name": {"type": "string", "required": True}},
+                },
+                {
+                    "type": "dict",
+                    "schema": {
+                        "format": {
+                            "type": "string",
+                            "required": True,
+                            "allowed": THEME_REGISTRY.keys(),
+                        }
+                    },
+                },
+                {
+                    "type": "dict",
+                    "schema": {
+                        "method": {
+                            "type": "string",
+                            "required": False,
+                            "allowed": ["black", "white", "dark", "light"],
+                            "default": "dark",
+                        }
+                    },
+                },
+            ],
+        },
+    }
 
     v = cerberus.Validator(new_schema, purge_unknown=False)
     #  document = v.normalized(document)
     #  if not v.validate(document):
-        #  for e in v.errors:
-            #  print(f"Error for key '{e}': {v.errors[e]}.")
-        #  sys.exit(1)
+    #  for e in v.errors:
+    #  print(f"Error for key '{e}': {v.errors[e]}.")
+    #  sys.exit(1)
     new_document = {}
     exit_on_finish = False
     for heading in document:
@@ -325,13 +359,22 @@ if __name__ == "__main__":
     start_time = time.time()
 
     parser = argparse.ArgumentParser(
-        description="Convert pictures to terminal colors.",
-        epilog="Contact the developer at <oliversandli@icloud.com> for any issues."
+        description="Convert pictures to terminal colors. WARNING: wtt3 is currently unfit for use.",
+        epilog="Contact the developer at <oliversandli@icloud.com> for any issues.",
     )
     parser.add_argument("taskfile", help="The path to a task file.")
-    parser.add_argument("-p", "--parallel", action="store_true", help="Use parallel processing.")
-    parser.add_argument("-t", "--time-analysis", action="store_true", help="Time the analysis section.")
-    parser.add_argument("-c", "--config-only", action="store_true", help="Only parse the task file, then exit.")
+    parser.add_argument(
+        "-p", "--parallel", action="store_true", help="Use parallel processing."
+    )
+    parser.add_argument(
+        "-t", "--time-analysis", action="store_true", help="Time the analysis section."
+    )
+    parser.add_argument(
+        "-c",
+        "--config-only",
+        action="store_true",
+        help="Only parse the task file, then exit.",
+    )
     parser.add_argument("-s", "--silent", action="store_true", help="Silent operation.")
     args = parser.parse_args()
 
@@ -356,7 +399,9 @@ if __name__ == "__main__":
             sys.exit(1)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         infoprint("Reshaping and removing duplicate pixels...")
-        pool = np.unique(np.reshape(image, (image.shape[0]*image.shape[1], image.shape[2])), axis=0)
+        pool = np.unique(
+            np.reshape(image, (image.shape[0] * image.shape[1], image.shape[2])), axis=0
+        )
 
         infoprint("Deciding colors...")
         if args.parallel:
@@ -390,22 +435,22 @@ if __name__ == "__main__":
             analysis_end = time.time()
             infoprint(f"Analysis took {analysis_end - analysis_start} seconds.")
         colorset = {
-                "black": black,
-                "briblack": briblack,
-                "white": white,
-                "red": red,
-                "brired": brired,
-                "green": green,
-                "brigreen": brigreen,
-                "yellow": yellow,
-                "briyellow": briyellow,
-                "blue": blue,
-                "briblue": briblue,
-                "magenta": magenta,
-                "brimagenta": brimagenta,
-                "cyan": cyan,
-                "bricyan": bricyan,
-                }
+            "black": black,
+            "briblack": briblack,
+            "white": white,
+            "red": red,
+            "brired": brired,
+            "green": green,
+            "brigreen": brigreen,
+            "yellow": yellow,
+            "briyellow": briyellow,
+            "blue": blue,
+            "briblue": briblue,
+            "magenta": magenta,
+            "brimagenta": brimagenta,
+            "cyan": cyan,
+            "bricyan": bricyan,
+        }
         infoprint("Generating theme...")
         for m in mappings:
             k = KonsoleColor(*m)
