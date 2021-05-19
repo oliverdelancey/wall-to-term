@@ -22,10 +22,13 @@ red for determining the red color for the theme.
 * PyYaml `python3 -m pip install pyyaml`
 
 
-## Notes
+## Versions
 
 The current working/featureful version is `wtt2`. It has more advanced, more accurate, and
-faster image analysis algorithms than `wtt`. `wtt3` is a WIP for advanced scripting
-options, i.e. batch processing/generation. It is currently unstable to the point of being
-unusable. This is a quick-and-dirty git-ification of a simple project, which is why `wtt3`
-isn't in its own branch.
+faster image analysis algorithms than `wtt` (and more features).  `wtt3` is a WIP for
+advanced scripting options, i.e. batch processing/generation. It is currently unstable to
+the point of being unusable.  Same thing goes for `wtt-numba`. It is a slightly
+radioactive experiment which cannot be disposed of as it serves as an interesting example
+of performance testing. Note that, according to very basic tests, `wtt2` with the
+`--parallel` flag tends to be as fast as `wtt-numba`, but without the extra library
+dependency.
