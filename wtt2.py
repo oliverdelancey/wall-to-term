@@ -3,7 +3,7 @@
 import argparse
 from itertools import repeat
 import multiprocessing
-from operator import add, sub, mul
+from operator import mul
 import sys
 import time
 
