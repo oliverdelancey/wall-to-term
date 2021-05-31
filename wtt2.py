@@ -271,7 +271,7 @@ class ColorIndex:
 class KonsoleTheme:
     def __init__(self, name, colors):
         self.name = name
-        self.extension = "colortheme"
+        self.extension = "colorscheme"
         self.entries = [
             ("Background", colors.black),
             ("BackgroundIntense", colors.black),
