@@ -306,7 +306,15 @@ class KonsoleTheme:
         for e in self.entries:
             theme += self._render_color(*e)
         theme += f"[General]\nDescription={self.name}\nOpacity=1\nWallpaper="
-        return theme
+        self.theme = theme
+
+    def save(self, dest):
+        try:
+            with open(f"{dest}.{self.extension}", "w") as f:
+                f.write(self.theme)
+        except FileNotFoundError:
+            print(f"ERROR: the destination path '{dest}' is invalid.")
+            sys.exit(1)
 
 
 class XFCE4TerminalTheme:
@@ -328,7 +336,59 @@ class XFCE4TerminalTheme:
             f"ColorBackground={self.colors.black}\n"
             f"ColorPalette={';'.join(self.colors.list())}"
         )
-        return theme
+        self.theme = theme
+
+    def save(self, dest):
+        try:
+            with open(f"{dest}.{self.extension}", "w") as f:
+                f.write(self.theme)
+        except FileNotFoundError:
+            print(f"ERROR: the destination path '{dest}' is invalid.")
+            sys.exit(1)
+
+
+class ColorSwatch:
+    def __init__(self, name, colors):
+        self.name = name
+        self.extension = "png"
+        self.colors = ColorIndex(list(map(lambda x: x / 255, colors.list())))
+
+    def render(self):
+        import matplotlib
+        import matplotlib.pyplot as plt
+
+        square_size = 100
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        color_list = self.colors.list()
+        # Generate top row with standard colors.
+        for i, color in enumerate(color_list[:8]):
+            ax.add_patch(
+                matplotlib.patches.Rectangle(
+                    (i * square_size, square_size),
+                    square_size,
+                    square_size,
+                    color=color,
+                )
+            )
+        # Generate bottom row with bold/bright colors.
+        for i, color in enumerate(color_list[8:]):
+            ax.add_patch(
+                matplotlib.patches.Rectangle(
+                    (i * square_size, 0),
+                    square_size,
+                    square_size,
+                    color=color,
+                )
+            )
+        plt.xlim([0, square_size * 8])
+        plt.ylim([0, square_size * 2])
+        plt.title(self.name)
+        plt.axis("off")
+        self.plt = plt
+
+    def save(self, dest):
+        self.plt.savefig(f"{dest}.{self.extension}")
 
 
 if __name__ == "__main__":
@@ -337,6 +397,7 @@ if __name__ == "__main__":
     theme_registry = {
         "konsole": KonsoleTheme,
         "xfce4": XFCE4TerminalTheme,
+        "swatch": ColorSwatch,
     }
 
     parser = argparse.ArgumentParser(
@@ -439,12 +500,7 @@ if __name__ == "__main__":
 
     infoprint("Generating theme...")
     theme = theme_registry[args.term](args.name, color_index)
-    theme_text = theme.render()
+    theme.render()
     infoprint("Saving theme...")
-    try:
-        with open(f"{args.dest}.{theme.extension}", "w") as f:
-            f.write(theme_text)
-    except FileNotFoundError:
-        print(f"ERROR: the destination path '{args.dest}' is invalid.")
-        sys.exit(1)
+    theme.save(args.dest)
     infoprint(f"Done. Took {time.time() - start_time} seconds.")
