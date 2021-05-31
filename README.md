@@ -1,5 +1,11 @@
 # wall-to-term
 
+## Contents
+* [Supported Terminals](#supported-terminals)
+* [Usage](#usage)
+* [Requirements](#requirements)
+* [Versions](#versions)
+
 `wall-to-term` converts images to terminal themes by finding the closest colors in the
 picture to the corresponding ideal colors. For instance, it looks for the closest color to
 red for determining the red color for the theme.
@@ -10,6 +16,47 @@ red for determining the red color for the theme.
 * XFCE4 Terminal
 
 I can add support for others. Just raise an issue and I'll see what I can do!
+
+## Usage
+
+For general useage, just run `./wtt2.py --help`. All the options and flags are described there.
+
+### Palettes
+
+`wall-to-term` works by trying to find the colors in an image that are closest to a set of
+ideal colors.  By default, it tries to find the closest color to absolute red (`255,0,0`),
+green, blue, etc.  This set of colors is considered a palette. It is essentially a
+collection of "goal" colors for the program to try to reach.
+
+With the `--palette` option, you can supply your own palette in the form of a text file.
+It must follow the following syntax:
+* 8 colors and 8 lines, each line corresponding to a color.
+* Color names may be used, such as `black` or `yellow`. Case does not matter.
+* For exact colors, write a comma-separated triplet of 0-255 RGB values, such as `255,0,0`.
+
+Each line corresponds to a specific color, in this order:
+```txt
+black
+red
+green
+yellow
+blue
+magenta
+cyan
+white
+```
+
+An example palette file:
+```txt
+black
+255,0,0
+0,255,0
+yellow
+BLUE
+255,0,255
+0,255,255
+white
+```
 
 ## Requirements
 

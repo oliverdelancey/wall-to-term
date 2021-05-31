@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+from collections import OrderedDict
 from itertools import repeat
 import multiprocessing
 from operator import mul
@@ -9,15 +10,6 @@ import time
 
 import cv2
 import numpy as np
-
-BLACK = (0, 0, 0)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-YELLOW = (255, 255, 0)
-BLUE = (0, 0, 255)
-MAGENTA = (255, 0, 255)
-CYAN = (0, 255, 255)
-WHITE = (255, 255, 255)
 
 
 def brighten(rgb, values=(30, 30, 30)):
@@ -152,8 +144,76 @@ def gencolors_parallel(goal, colors):
     return (c, brighten(c))
 
 
+class tcolors:
+    OKGREEN = "\033[92m"
+    WARNING = "\033[93m"
+    FAIL = "\033[91m"
+    RESET = "\033[0m"
+    BOLD = "\033[1m"
+    UNDERLINE = "\033[4m"
+
+
 def infoprint(s):
     print(f"=> {s}")
+
+
+def errorprint(s):
+    print(f"{tcolors.FAIL}<ERROR> => {s}{tcolors.RESET}")
+
+
+class ColorPalette:
+    def __init__(self, palette_name=None):
+        colors = OrderedDict(
+            (
+                ("black", (0, 0, 0)),
+                ("red", (255, 0, 0)),
+                ("green", (0, 255, 0)),
+                ("yellow", (255, 255, 0)),
+                ("blue", (0, 0, 255)),
+                ("magenta", (255, 0, 255)),
+                ("cyan", (0, 255, 255)),
+                ("white", (255, 255, 255)),
+            )
+        )
+
+        if palette_name:
+            with open(palette_name, "r") as f:
+                contents = f.read().strip().split("\n")
+            if len(contents) != 8:
+                errorprint(
+                    f"Palette '{palette_name}' has {len(contents)} colors, not 8."
+                )
+                sys.exit(1)
+            for line, color, linno in zip(contents, colors, range(len(contents))):
+                infoprint(f"Comparing {line} and {color}")
+                if line != color:
+                    colors[color] = self._analyze(line, linno)
+
+        self.black = colors["black"]
+        self.red = colors["red"]
+        self.green = colors["green"]
+        self.yellow = colors["yellow"]
+        self.blue = colors["blue"]
+        self.magenta = colors["magenta"]
+        self.cyan = colors["cyan"]
+        self.white = colors["white"]
+
+    def _analyze(self, s, line):
+        try:
+            vals = list(map(int, s.split(",")))
+        except ValueError:
+            errorprint(f"Bad formatting on line {line} in palette.")
+            sys.exit(1)
+        if len(vals) != 3:
+            errorprint(
+                f"Found {len(vals)} values on line {line} in palette. Should be 3."
+            )
+            sys.exit(1)
+        for v in vals:
+            if v > 255 or v < 0:
+                errorprint(f"Value out of range on line {line} in palette.")
+                sys.exit(1)
+        return vals
 
 
 class ColorIndex:
@@ -304,15 +364,24 @@ if __name__ == "__main__":
         "-b", "--black", action="store_true", help="Force a black background."
     )
     parser.add_argument(
-        "-p", "--parallel", action="store_true", help="Use parallel processing."
+        "-p", "--palette", action="store", help="Specify a palette file."
+    )
+    parser.add_argument(
+        "-P", "--parallel", action="store_true", help="Use parallel processing."
     )
     parser.add_argument(
         "-t", "--time-analysis", action="store_true", help="Time the analysis section."
     )
     args = parser.parse_args()
 
+    if args.palette:
+        infoprint(f"Reading palette {args.palette}...")
+        palette = ColorPalette(args.palette)
+    else:
+        palette = ColorPalette()
+
     if (args.light and args.white) or args.black:
-        print("ERROR: --light, --white, and --black are mutually exclusive.")
+        errorprint("--light, --white, and --black are mutually exclusive.")
         sys.exit(1)
 
     infoprint("Reading image...")
@@ -340,9 +409,9 @@ if __name__ == "__main__":
         white, briwhite = (246, 247, 248), (255, 255, 255)
     else:
         infoprint("black")
-        black, briblack = gencolors(BLACK, pool)
+        black, briblack = gencolors(palette.black, pool)
         infoprint("white")
-        white, briwhite = gencolors(WHITE, pool)
+        white, briwhite = gencolors(palette.white, pool)
     if args.light or args.white:
         black, white = white, black
         briblack, briwhite = briwhite, briblack
@@ -352,17 +421,17 @@ if __name__ == "__main__":
     color_index.briwhite = briwhite
 
     infoprint("red")
-    color_index.red, color_index.brired = gencolors(RED, pool)
+    color_index.red, color_index.brired = gencolors(palette.red, pool)
     infoprint("green")
-    color_index.green, color_index.brigreen = gencolors(GREEN, pool)
+    color_index.green, color_index.brigreen = gencolors(palette.green, pool)
     infoprint("yellow")
-    color_index.yellow, color_index.briyellow = gencolors(YELLOW, pool)
+    color_index.yellow, color_index.briyellow = gencolors(palette.yellow, pool)
     infoprint("blue")
-    color_index.blue, color_index.briblue = gencolors(BLUE, pool)
+    color_index.blue, color_index.briblue = gencolors(palette.blue, pool)
     infoprint("magenta")
-    color_index.magenta, color_index.brimagenta = gencolors(MAGENTA, pool)
+    color_index.magenta, color_index.brimagenta = gencolors(palette.magenta, pool)
     infoprint("cyan")
-    color_index.cyan, color_index.bricyan = gencolors(CYAN, pool)
+    color_index.cyan, color_index.bricyan = gencolors(palette.cyan, pool)
 
     if args.time_analysis:
         analysis_end = time.time()
