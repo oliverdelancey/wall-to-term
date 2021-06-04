@@ -19,7 +19,20 @@ I can add support for others. Just raise an issue and I'll see what I can do!
 
 ## Usage
 
-For general useage, just run `./wtt2.py --help`. All the options and flags are described there.
+For general usage, just run `./wtt2.py --help`. All the options and flags are described
+there.
+
+Note that I tend to get the best results with the following settings (of course, this
+could and probably will be different for each image and your personal preference):
+
+* Play quite a bit with the `--threshold`. This is especially important for images which
+  do not have, for instance, a green color.
+* Use `--kmeans`. There is nothing inherently better about it, it just gives slightly
+  different results, which look better to me.
+* Experiment with different palettes. This changes what colors `wtt2` regards as
+  "best-case" colors, and therefore can drastically effect output.
+* Use the `swatch` theme type. It will generate a color swatch image. This is extremely
+  useful for quickly testing other parameters, such as `--threshold` or `--palette`.
 
 ### Palettes
 
