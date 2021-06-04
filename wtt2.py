@@ -495,7 +495,8 @@ if __name__ == "__main__":
     if args.clear_cache:
         shutil.rmtree(cache_dir)
         cache_dir.mkdir(parents=True, exist_ok=False)
-    current_cacheable_name = f"{Path(args.picture).name}"
+    current_cacheable_name = "wttcache"
+    current_cacheable_name += str(Path(args.picture).expanduser()).replace("/", "-")
     current_cacheable_name += ".km" if args.kmeans else ".un"
     current_cacheable_name += ".npy"
 
