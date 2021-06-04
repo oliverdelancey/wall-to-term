@@ -19,10 +19,8 @@ def brighten(rgb, values=(30, 30, 30)):
     """
     Brighten an RGB color.
 
-    If the brightened color is over (255, 255, 255), subtract `values` instead of adding
-    `values`, effectively dimming the color. If this results in a negative number,
-    return the original color. This is implemented to guarantee a valid (and hopefully
-    different) color is returned.
+    `values' is added to `rgb'. The resulting triplet is clipped between 0 and 255. This
+    is implemented to guarantee a valid (and hopefully different) color is returned.
 
     Parameters
     ----------
@@ -36,14 +34,8 @@ def brighten(rgb, values=(30, 30, 30)):
     tuple[int]
         A brightened RGB color.
     """
-    # Apply brightness.
-    br_color = np.add(rgb, values)
-    if any(i > 255 for i in br_color):
-        br_color = np.subtract(rgb, values)
-    if any(i < 0 for i in br_color):
-        br_color = rgb
 
-    return br_color
+    return np.clip(np.add(rgb, values), 0, 255)
 
 
 # CURRENTLY UNUSED
