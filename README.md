@@ -30,7 +30,7 @@ could and probably will be different for each image and your personal preference
 * Use `--kmeans`. There is nothing inherently better about it, it just gives slightly
   different results, which look better to me.
 * Experiment with different palettes. This changes what colors `wtt2` regards as
-  "best-case" colors, and therefore can drastically effect output.
+  "best-case" colors, and therefore can drastically affect output.
 * Use the `swatch` theme type. It will generate a color swatch image. This is extremely
   useful for quickly testing other parameters, such as `--threshold` or `--palette`.
 
