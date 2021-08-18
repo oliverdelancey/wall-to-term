@@ -5,6 +5,7 @@
 * [Usage](#usage)
 * [Requirements](#requirements)
 * [Versions](#versions)
+* [Roadmap](#roadmap)
 
 `wall-to-term` converts images to terminal themes by finding the closest colors in the
 picture to the corresponding ideal colors. For instance, it looks for the closest color to
@@ -94,3 +95,8 @@ radioactive experiment which cannot be disposed of as it serves as an interestin
 of performance testing. Note that, according to very basic tests, `wtt2` with the
 `--parallel` flag tends to be as fast as `wtt-numba`, but without the extra library
 dependency.
+
+## Roadmap
+
+* Add Alacritty support.
+* Add Gnome Terminal support.
