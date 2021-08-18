@@ -74,15 +74,11 @@ white
 
 ## Requirements
 
-### wtt and wtt2
+### wtt2
 
 * OpenCV `python3 -m pip install opencv-python`
 * Numpy `python3 -m pip install numpy`
-
-### wtt3 (experimental/broken)
-
-* Cerberus `python3 -m pip install cerberus`
-* PyYaml `python3 -m pip install pyyaml`
+* scikit-learn `python3 -m pip install scikit-learn`
 
 
 ## Versions
