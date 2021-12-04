@@ -96,3 +96,4 @@ dependency.
 
 * Add Alacritty support.
 * Add Gnome Terminal support.
+* Add Windows Terminal support.
