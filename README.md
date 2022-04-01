@@ -79,6 +79,7 @@ white
 * OpenCV `python3 -m pip install opencv-python`
 * Numpy `python3 -m pip install numpy`
 * scikit-learn `python3 -m pip install scikit-learn`
+* matplotlib `python3 -m pip install matplotlib`
 
 
 ## Versions
