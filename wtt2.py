@@ -425,7 +425,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
         description="Convert pictures to terminal colors.",
-        epilog="Contact the developer at <oliversandli@icloud.com> for any issues.",
+        epilog="Contact the developer at <oliverdelancey@gmail.com> for any issues.",
     )
     parser.add_argument("picture", help="The path to the picture.")
     parser.add_argument(
