@@ -288,8 +288,22 @@ class ColorIndex:
 # Theme Classes
 # --------------
 
+class Theme:
+    def __init__(self, name, colors):
+        pass
 
-class KonsoleTheme:
+    def render(self):
+        pass
+
+    def save(self, dest):
+        try:
+            with open(f"{dest}.{self.extension}", "w") as f:
+                f.write(self.theme)
+        except FileNotFoundError:
+            print(f"ERROR: the destination path '{dest}' is invalid.")
+            sys.exit(1)
+
+class KonsoleTheme(Theme):
     def __init__(self, name, colors):
         self.name = name
         self.extension = "colorscheme"
@@ -329,16 +343,8 @@ class KonsoleTheme:
         theme += f"[General]\nDescription={self.name}\nOpacity=1\nWallpaper="
         self.theme = theme
 
-    def save(self, dest):
-        try:
-            with open(f"{dest}.{self.extension}", "w") as f:
-                f.write(self.theme)
-        except FileNotFoundError:
-            print(f"ERROR: the destination path '{dest}' is invalid.")
-            sys.exit(1)
 
-
-class XFCE4TerminalTheme:
+class XFCE4TerminalTheme(Theme):
     def __init__(self, name, colors):
         self.name = name
         self.extension = "theme"
@@ -359,13 +365,46 @@ class XFCE4TerminalTheme:
         )
         self.theme = theme
 
-    def save(self, dest):
-        try:
-            with open(f"{dest}.{self.extension}", "w") as f:
-                f.write(self.theme)
-        except FileNotFoundError:
-            print(f"ERROR: the destination path '{dest}' is invalid.")
-            sys.exit(1)
+
+class AlacrittyTheme(Theme):
+    def __init__(self, name, colors):
+        self.name = name
+        self.extension = "yml"
+        self.colors = colors
+
+    def _rgb_to_hex(self, rgb):
+        return "#" + "".join(list(map(lambda x: hex(x)[2:].zfill(2), rgb)))
+
+    def render(self):
+        theme = f"{self.name}: &{self.name.lower()}\n"
+        theme += "  bright:\n"
+        theme += f"    black: '{self._rgb_to_hex(self.colors.briblack)}'\n"
+        theme += f"    blue: '{self._rgb_to_hex(self.colors.briblue)}'\n"
+        theme += f"    cyan: '{self._rgb_to_hex(self.colors.bricyan)}'\n"
+        theme += f"    green: '{self._rgb_to_hex(self.colors.brigreen)}'\n"
+        theme += f"    magenta: '{self._rgb_to_hex(self.colors.brimagenta)}'\n"
+        theme += f"    red: '{self._rgb_to_hex(self.colors.brired)}'\n"
+        theme += f"    white: '{self._rgb_to_hex(self.colors.briwhite)}'\n"
+        theme += f"    yellow: '{self._rgb_to_hex(self.colors.briyellow)}'\n"
+        theme += "  cursor:\n"
+        theme += f"    cursor: '{self._rgb_to_hex(self.colors.briwhite)}'\n"
+        theme += f"    text: '{self._rgb_to_hex(self.colors.briblack)}'\n"
+        theme += "  normal:\n"
+        theme += f"    black: '{self._rgb_to_hex(self.colors.black)}'\n"
+        theme += f"    blue: '{self._rgb_to_hex(self.colors.blue)}'\n"
+        theme += f"    cyan: '{self._rgb_to_hex(self.colors.cyan)}'\n"
+        theme += f"    green: '{self._rgb_to_hex(self.colors.green)}'\n"
+        theme += f"    magenta: '{self._rgb_to_hex(self.colors.magenta)}'\n"
+        theme += f"    red: '{self._rgb_to_hex(self.colors.red)}'\n"
+        theme += f"    white: '{self._rgb_to_hex(self.colors.white)}'\n"
+        theme += f"    yellow: '{self._rgb_to_hex(self.colors.yellow)}'\n"
+        theme += "  primary:\n"
+        theme += f"    background: '{self._rgb_to_hex(self.colors.black)}'\n"
+        theme += f"    foreground: '{self._rgb_to_hex(self.colors.white)}'\n"
+        theme += "  selection:\n"
+        theme += f"    background: '{self._rgb_to_hex(self.colors.white)}'\n"
+        theme += f"    text: '{self._rgb_to_hex(self.colors.black)}'\n"
+        self.theme = theme
 
 
 class ColorSwatch:
@@ -420,6 +459,7 @@ if __name__ == "__main__":
     theme_registry = {
         "konsole": KonsoleTheme,
         "xfce4": XFCE4TerminalTheme,
+        "alacritty": AlacrittyTheme,
         "swatch": ColorSwatch,
     }
 

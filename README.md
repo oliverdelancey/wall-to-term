@@ -13,6 +13,7 @@ red for determining the red color for the theme.
 
 ## Supported Terminals
 
+* Alacritty
 * Konsole
 * XFCE4 Terminal
 
@@ -95,6 +96,5 @@ dependency.
 
 ## Roadmap
 
-* Add Alacritty support.
 * Add Gnome Terminal support.
 * Add Windows Terminal support.
