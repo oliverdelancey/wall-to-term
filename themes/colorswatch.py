@@ -1,4 +1,5 @@
 from theme import Theme
+from colorindex import ColorIndex
 
 class ColorSwatch:
     def __init__(self, name, colors):
