@@ -14,6 +14,20 @@ import cv2
 import numpy as np
 from sklearn.cluster import MiniBatchKMeans
 
+from colorindex import ColorIndex
+
+from themes.alacritty import AlacrittyTheme
+from themes.konsole import KonsoleTheme
+from themes.xfce4term import XFCE4TerminalTheme
+from themes.colorswatch import ColorSwatch
+
+theme_registry = {
+    "alacritty": AlacrittyTheme,
+    "konsole": KonsoleTheme,
+    "xfce4": XFCE4TerminalTheme,
+    "swatch": ColorSwatch,
+}
+
 
 def brighten(rgb, values=(30, 30, 30)):
     """
@@ -237,231 +251,9 @@ class ColorPalette:
         return vals
 
 
-class ColorIndex:
-    def __init__(self, vals=None):
-        if not vals:
-            vals = [i for i in [None] * 16]
-        if len(vals) != 16:
-            infoprint(f"Bad length {len(vals)}")
-            sys.exit(1)
-        (
-            self.black,
-            self.red,
-            self.green,
-            self.yellow,
-            self.blue,
-            self.magenta,
-            self.cyan,
-            self.white,
-            self.briblack,
-            self.brired,
-            self.brigreen,
-            self.briyellow,
-            self.briblue,
-            self.brimagenta,
-            self.bricyan,
-            self.briwhite,
-        ) = vals
-
-    def list(self):
-        return [
-            self.black,
-            self.red,
-            self.green,
-            self.yellow,
-            self.blue,
-            self.magenta,
-            self.cyan,
-            self.white,
-            self.briblack,
-            self.brired,
-            self.brigreen,
-            self.briyellow,
-            self.briblue,
-            self.brimagenta,
-            self.bricyan,
-            self.briwhite,
-        ]
-
-
-# --------------
-# Theme Classes
-# --------------
-
-class Theme:
-    def __init__(self, name, colors):
-        pass
-
-    def render(self):
-        pass
-
-    def save(self, dest):
-        try:
-            with open(f"{dest}.{self.extension}", "w") as f:
-                f.write(self.theme)
-        except FileNotFoundError:
-            print(f"ERROR: the destination path '{dest}' is invalid.")
-            sys.exit(1)
-
-class KonsoleTheme(Theme):
-    def __init__(self, name, colors):
-        self.name = name
-        self.extension = "colorscheme"
-        self.entries = [
-            ("Background", colors.black),
-            ("BackgroundIntense", colors.black),
-            ("Foreground", colors.briwhite),
-            ("ForegroundIntense", colors.briwhite, True),
-            ("Color0", colors.black),
-            ("Color0Intense", colors.briblack),
-            ("Color1", colors.red),
-            ("Color1Intense", colors.brired),
-            ("Color2", colors.green),
-            ("Color2Intense", colors.brigreen),
-            ("Color3", colors.yellow),
-            ("Color3Intense", colors.briyellow),
-            ("Color4", colors.blue),
-            ("Color4Intense", colors.briblue),
-            ("Color5", colors.magenta),
-            ("Color5Intense", colors.brimagenta),
-            ("Color6", colors.cyan),
-            ("Color6Intense", colors.bricyan),
-            ("Color7", colors.white),
-            ("Color7Intense", colors.briwhite),
-        ]
-
-    def _render_color(self, name, color, bold=False):
-        retval = f"[{name}]\nColor={color[0]},{color[1]},{color[2]}"
-        if bold:
-            retval += "\nBold=true"
-        return retval + "\n"
-
-    def render(self):
-        theme = ""
-        for e in self.entries:
-            theme += self._render_color(*e)
-        theme += f"[General]\nDescription={self.name}\nOpacity=1\nWallpaper="
-        self.theme = theme
-
-
-class XFCE4TerminalTheme(Theme):
-    def __init__(self, name, colors):
-        self.name = name
-        self.extension = "theme"
-        self.colors = ColorIndex(list(map(self._rgb_to_12hex, colors.list())))
-
-    def _rgb_to_12hex(self, rgb):
-        return "#" + "".join(list(map(lambda x: hex(x)[2:].zfill(2), rgb)))
-
-    def render(self):
-        theme = (
-            "[Scheme]\n"
-            f"Name={self.name}\n"
-            f"ColorCursor={self.colors.yellow}\n"
-            "ColorCursorUseDefault=FALSE\n"
-            f"ColorForeground={self.colors.briwhite}\n"
-            f"ColorBackground={self.colors.black}\n"
-            f"ColorPalette={';'.join(self.colors.list())}"
-        )
-        self.theme = theme
-
-
-class AlacrittyTheme(Theme):
-    def __init__(self, name, colors):
-        self.name = name
-        self.extension = "yml"
-        self.colors = colors
-
-    def _rgb_to_hex(self, rgb):
-        return "#" + "".join(list(map(lambda x: hex(x)[2:].zfill(2), rgb)))
-
-    def render(self):
-        theme = f"{self.name}: &{self.name.lower()}\n"
-        theme += "  bright:\n"
-        theme += f"    black: '{self._rgb_to_hex(self.colors.briblack)}'\n"
-        theme += f"    blue: '{self._rgb_to_hex(self.colors.briblue)}'\n"
-        theme += f"    cyan: '{self._rgb_to_hex(self.colors.bricyan)}'\n"
-        theme += f"    green: '{self._rgb_to_hex(self.colors.brigreen)}'\n"
-        theme += f"    magenta: '{self._rgb_to_hex(self.colors.brimagenta)}'\n"
-        theme += f"    red: '{self._rgb_to_hex(self.colors.brired)}'\n"
-        theme += f"    white: '{self._rgb_to_hex(self.colors.briwhite)}'\n"
-        theme += f"    yellow: '{self._rgb_to_hex(self.colors.briyellow)}'\n"
-        theme += "  cursor:\n"
-        theme += f"    cursor: '{self._rgb_to_hex(self.colors.briwhite)}'\n"
-        theme += f"    text: '{self._rgb_to_hex(self.colors.briblack)}'\n"
-        theme += "  normal:\n"
-        theme += f"    black: '{self._rgb_to_hex(self.colors.black)}'\n"
-        theme += f"    blue: '{self._rgb_to_hex(self.colors.blue)}'\n"
-        theme += f"    cyan: '{self._rgb_to_hex(self.colors.cyan)}'\n"
-        theme += f"    green: '{self._rgb_to_hex(self.colors.green)}'\n"
-        theme += f"    magenta: '{self._rgb_to_hex(self.colors.magenta)}'\n"
-        theme += f"    red: '{self._rgb_to_hex(self.colors.red)}'\n"
-        theme += f"    white: '{self._rgb_to_hex(self.colors.white)}'\n"
-        theme += f"    yellow: '{self._rgb_to_hex(self.colors.yellow)}'\n"
-        theme += "  primary:\n"
-        theme += f"    background: '{self._rgb_to_hex(self.colors.black)}'\n"
-        theme += f"    foreground: '{self._rgb_to_hex(self.colors.white)}'\n"
-        theme += "  selection:\n"
-        theme += f"    background: '{self._rgb_to_hex(self.colors.white)}'\n"
-        theme += f"    text: '{self._rgb_to_hex(self.colors.black)}'\n"
-        self.theme = theme
-
-
-class ColorSwatch:
-    def __init__(self, name, colors):
-        self.name = name
-        self.extension = "png"
-        self.colors = ColorIndex(
-            [list(map(lambda x: x / 255, i)) for i in colors.list()]
-        )
-
-    def render(self):
-        import matplotlib
-        import matplotlib.pyplot as plt
-
-        square_size = 100
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        color_list = self.colors.list()
-        # Generate top row with standard colors.
-        for i, color in enumerate(color_list[:8]):
-            ax.add_patch(
-                matplotlib.patches.Rectangle(
-                    (i * square_size, square_size),
-                    square_size,
-                    square_size,
-                    color=color,
-                )
-            )
-        # Generate bottom row with bold/bright colors.
-        for i, color in enumerate(color_list[8:]):
-            ax.add_patch(
-                matplotlib.patches.Rectangle(
-                    (i * square_size, 0),
-                    square_size,
-                    square_size,
-                    color=color,
-                )
-            )
-        plt.xlim([0, square_size * 8])
-        plt.ylim([0, square_size * 2])
-        plt.title(self.name)
-        plt.axis("off")
-        self.plt = plt
-
-    def save(self, dest):
-        self.plt.savefig(f"{dest}.{self.extension}")
-
 
 if __name__ == "__main__":
     start_time = time.time()
-
-    theme_registry = {
-        "konsole": KonsoleTheme,
-        "xfce4": XFCE4TerminalTheme,
-        "alacritty": AlacrittyTheme,
-        "swatch": ColorSwatch,
-    }
 
     parser = argparse.ArgumentParser(
         description="Convert pictures to terminal colors.",
