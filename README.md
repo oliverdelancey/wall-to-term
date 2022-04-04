@@ -21,7 +21,7 @@ red for determining the red color for the theme.
 
 ### Text Editors 
 
-* Doom Emacs.
+* Doom Emacs. Largely untested. Preliminary tests show that some color combinations defined by the theme template result in reduced visibility due to the colors being too close. Will be fine-tuned with time and further testing.
 
 I can add support for others. Just raise an issue and I'll see what I can do!
 
