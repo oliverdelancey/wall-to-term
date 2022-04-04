@@ -1,21 +1,27 @@
 # wall-to-term
 
 ## Contents
-* [Supported Terminals](#supported-terminals)
+* [Supported Programs](#supported-programs)
 * [Usage](#usage)
 * [Requirements](#requirements)
 * [Versions](#versions)
 * [Roadmap](#roadmap)
 
-`wall-to-term` converts images to terminal themes by finding the closest colors in the
+`wall-to-term` converts images to color themes by finding the closest colors in the
 picture to the corresponding ideal colors. For instance, it looks for the closest color to
 red for determining the red color for the theme.
 
-## Supported Terminals
+## Supported Programs
+
+### Terminal Emulators
 
 * Alacritty
 * Konsole
 * XFCE4 Terminal
+
+### Text Editors 
+
+* Doom Emacs.
 
 I can add support for others. Just raise an issue and I'll see what I can do!
 
