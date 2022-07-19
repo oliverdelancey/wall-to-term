@@ -20,6 +20,7 @@ from themes.alacritty import AlacrittyTheme
 from themes.konsole import KonsoleTheme
 from themes.xfce4term import XFCE4TerminalTheme
 from themes.colorswatch import ColorSwatch
+from themes.raw import Raw
 from themes.doomemacs import DoomEmacsTheme
 
 theme_registry = {
@@ -27,6 +28,7 @@ theme_registry = {
     "doom-emacs": DoomEmacsTheme,
     "konsole": KonsoleTheme,
     "xfce4": XFCE4TerminalTheme,
+    "raw": Raw,
     "swatch": ColorSwatch,
 }
 
